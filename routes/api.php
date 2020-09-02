@@ -19,12 +19,24 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('/auth/login', 'AuthController@login');
+Route::post('/auth/logout', 'AuthController@logout');
 
 Route::group(['middleware'=>'auth:api'], function(){
     Route::get('/usuarios/usuarios', 'UsuariosController@get_usuarios');
 
+    Route::post('/usuarios/actualizarestado', 'UsuariosController@actualizar_estado');
+    Route::get('/usuarios/menu_opciones/{id}', 'UsuariosController@menu_opciones');
 });
 
+
+Route::post('/usuarios/actualizarusuario', 'UsuariosController@actualizar_usuario');
 Route::post('/usuarios/registro', 'UsuariosController@registro_usuarios');
 Route::get('/usuarios/menu', 'UsuariosController@menu');
 Route::get('/usuarios/tipo', 'UsuariosController@tipo_usuarios');
+Route::get('/usuarios/actualizar/{id}', 'UsuariosController@get_usuarios_byid');
+Route::get('/formulario/tipodato', 'FormularioController@get_tipo_dato');
+Route::post('/formulario/registar', 'FormularioController@registro_formulario');
+Route::get('/formulario/formularios', 'FormularioController@get_formularios');
+Route::get('/formulario/formulario/{id}', 'FormularioController@get_formulario');
+Route::post('/formulario/actualizarformulario', 'FormularioController@actualizar_formulario');
+Route::post('/formulario/actualizarestado', 'FormularioController@actualizar_estado');

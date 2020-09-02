@@ -28,9 +28,20 @@ class AuthController extends Controller
         {
             return response()->json([
                 'estado'=>false,
-                'mensaje'=> 'Usuario invalido, verifique sus credenciales.'
+                'mensaje'=> 'Usuario invalido, verifique sus credenciales o comuniquese con soporte.'
             ], 200);
         }
 
     }
+
+    public function logout(Request $request){
+
+        $query = DB::select('call PROC_LOGOUT(?)', [$request->ID_USUARIO]);
+        return response()->json([
+            'estado'=>true,
+            'mensaje'=> 'Cierre de Sesion'
+        ], 200);
+
+    }
+
 }
