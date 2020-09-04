@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Hash;
 
 class UsuariosController extends Controller
 {
-    public function get_usuarios(Request $request)
+    public function get_usuarios(Request $request, $estado)
     {
-        $usuarios = DB::select('call GET_USUARIOS()');
+        $usuarios = DB::select('call GET_USUARIOS(?)', [$estado]);
 
             return response()->json(
                  $usuarios

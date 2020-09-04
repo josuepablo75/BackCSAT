@@ -37,9 +37,9 @@ class FormularioController extends Controller
 
     }
 
-    public function get_formularios(Request $request)
+    public function get_formularios(Request $request, $estado)
     {
-        $formulario = DB::select('call GET_FORMMULARIOS()');
+        $formulario = DB::select('call GET_FORMMULARIOS(?)', [$estado]);
 
         return response()->json(
             $formulario
@@ -112,5 +112,69 @@ class FormularioController extends Controller
         }
 
     }
+
+    public function asignar_formulario(Request $request){
+
+
+        $formulario = DB::select('call PROC_INS_ASIGNACIONES(?)', [$request->getContent() ]);
+
+        if ($formulario[0]->P_RESULT === -1){
+            return response()->json([
+                'estado'=>false,
+                'mensaje'=> $formulario[0]-> MESSAGE_TEXT
+            ], 406);
+        }
+        else
+        {
+            return response()->json([
+                'estado'=>true,
+                'mensaje'=> $formulario[0]->P_MSJ
+            ], 200);
+        }
+
+    }
+
+    public function desasignar_formulario(Request $request){
+
+
+        $formulario = DB::select('call PROC_UPD_ASIGNACIONES(?)', [$request->getContent() ]);
+
+        if ($formulario[0]->P_RESULT === -1){
+            return response()->json([
+                'estado'=>false,
+                'mensaje'=> $formulario[0]-> MESSAGE_TEXT
+            ], 406);
+        }
+        else
+        {
+            return response()->json([
+                'estado'=>true,
+                'mensaje'=> $formulario[0]->P_MSJ
+            ], 200);
+        }
+
+    }
+
+    public function get_usuarios_formulario(Request $request, $idformulario)
+    {
+        $asignacion = DB::select('call GET_USUARIOS_ASIGNACION(?)',[$idformulario]);
+
+
+        return response()->json(
+            $asignacion
+            , 200);
+    }
+
+    public function get_usuarios_asignados(Request $request, $idformulario)
+    {
+        $asignacion = DB::select('call GET_USUARIOS_ASIGNADOS(?)',[$idformulario]);
+
+
+        return response()->json(
+            $asignacion
+            , 200);
+    }
+
+
 
 }
