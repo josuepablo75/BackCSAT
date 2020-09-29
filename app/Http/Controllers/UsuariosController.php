@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Storage;
 use function Sodium\add;
 use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
 
 class UsuariosController extends Controller
 {
@@ -140,20 +142,20 @@ class UsuariosController extends Controller
 
             if($request->PASSWORD == 'default')
             {
-                $query = DB::select('call PROC_UPD_USUARIO(?,?,?,?,?,?,?,?,?,?,?,?)',
+                $query = DB::select('call PROC_UPD_USUARIO(?,?,?,?,?,?,?,?,?,?,?,?,?)',
                     [   $request->ID_USUARIO, $request->ID_TIPO_USUARIO, $request->CUI, $request->PRIMER_NOMBRE,
                         $request->SEGUNDO_NOMBRE, $request->PRIMER_APELLIDO, $request->SEGUNDO_APELLIDO,
                         $request->FECHA_NACIMIENTO, $request->GENERO, $request->USERNAME,
-                        $request->PWS, $request->EMAIL
+                        $request->PWS, $request->EMAIL, $request->FOTO
                     ]);
             }
             else
             {
-                $query = DB::select('call PROC_UPD_USUARIO(?,?,?,?,?,?,?,?,?,?,?,?)',
+                $query = DB::select('call PROC_UPD_USUARIO(?,?,?,?,?,?,?,?,?,?,?,?,?)',
                     [   $request->ID_USUARIO,$request->ID_TIPO_USUARIO, $request->CUI, $request->PRIMER_NOMBRE,
                         $request->SEGUNDO_NOMBRE, $request->PRIMER_APELLIDO, $request->SEGUNDO_APELLIDO,
                         $request->FECHA_NACIMIENTO, $request->GENERO, $request->USERNAME,
-                        Hash::make($request->PASSWORD), $request->EMAIL
+                        Hash::make($request->PASSWORD), $request->EMAIL, $request->FOTO
                     ]);
             }
 
@@ -222,5 +224,40 @@ class UsuariosController extends Controller
             , 200);
 
     }
+
+    public function upload_foto(Request $request){
+
+
+        if ($request->hasFile('file'))
+        {
+            $file = $request->file('file');
+            $filename = $file->getClientOriginalName();
+            $filename = pathinfo($filename, PATHINFO_FILENAME);
+            $nombre_archivo = str_replace(" ", "_", $filename);
+            $extension = $file->getClientOriginalExtension();
+            $archivo = date('His').'-'.$nombre_archivo.'.'.$extension;
+
+            $file->move(public_path('Files/'), $archivo);
+
+            return response()->json(
+                [   'P_ARCHIVO'=>$archivo,
+                    'P_EXTENSION'=> strtoupper($extension)
+                ]
+                , 200);
+        }
+    }
+
+    public function ver_foto(Request $request, $foto){
+        return response()->download(public_path('Files/'.$foto));
+    }
+
+    public function eliminar_archivo(Request $request, $path_archivo) {
+        File::delete(public_path('Files/').$path_archivo);
+        return response()->json(
+            ['estado'=>true, 'mensaje'=> 'Eliminado correctamente'],
+            200
+        );
+    }
+
 
 }
