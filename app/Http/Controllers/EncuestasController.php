@@ -18,6 +18,19 @@ class EncuestasController extends Controller
         , 200);
     }
 
+        public function get_encuestas_respondidas(Request $request, $idFormulario)
+    {
+
+        $encuestas = DB::select('call GET_ENCUESTAS_FORMULARIO(?)', [$idFormulario]);
+
+        return response()->json(
+        $encuestas
+        , 200);
+    }
+
+
+    
+
     public function get_respuestas(Request $request, $idEncuesta){
         $respuestas = DB::select('call GET_RESPUESTAS(?)',[$idEncuesta]);
         foreach ($respuestas as $item) {
